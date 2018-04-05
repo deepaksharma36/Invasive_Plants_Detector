@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 **Author**: `Sasank Chilamkurthy <https://chsasank.github.io>`_
+Deepak Sharma
 """
 # License: BSD
 # Author: Sasank Chilamkurthy
