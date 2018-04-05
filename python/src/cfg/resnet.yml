@@ -1,0 +1,21 @@
+RESNET:
+    NUM_EPOCHS : 10
+    LEARNING_RATE : 0.0008
+    PORT : 8097
+    MOMENTUM : 0.9
+    STEP_SIZE : 7
+    GAMMA : 0.1
+DATASET:
+    NAME: Invasive
+    BATCH_SIZE : 160
+    NUM_CLASSES : 2
+    NUM_WORKER : 3
+    TRAIN_SHUFFLE : True
+    TRAIN_VAL_RATIO : .8
+    DATA_DIR : './hymenoptera_data'
+    IMG_SIZE : [224, 224]
+SW:
+    SWF : False
+    CROP_SPLIT : "test"
+    WINDOW_AVG : 25
+    WRITE_HARD_NEG : False
