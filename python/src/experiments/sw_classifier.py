@@ -4,6 +4,7 @@ from src.tools.finetune_resnet import TrainResent
 #from src.tools.data_split import DataSplit
 from src.evaluation.plot_roc_pr import Evaluation
 from src.utils.cfg import yfile_to_cfg
+from src.utils.geometric import check_overlapping
 from src.tools.data_split import DataSplit
 
 import os
@@ -27,7 +28,6 @@ class SW_Classifier():
         self.__init_plots__()
 
     def __init_plots__(self):
-
         curve = plt.figure()
         self.roc_curve_plot_subset = curve.add_subplot(321)
         self.pr_curve_plot_subset = curve.add_subplot(322)
@@ -73,6 +73,50 @@ class SW_Classifier():
                                score.unsqueeze(0)), 0)
         return image_crop_score_bins, crop_file_names
 
+    def add_to_spatial_connected_groupping(self, score, crop_name, groups={},
+                                    groups_score={}):
+        #def check_spatial_connectivity(groups, crop_name):
+        def crop_name_to_coor(name):
+           coor = name.split('_')[-4:]
+           coor = [int(val) for val in coor]
+           coor[2] = coor[2] + coor[0]
+           coor[3] = coor[3] + coor[1]
+           return coor
+
+        group_id = 0
+        for group_id in groups:
+            for member_name in groups[group_id]:
+                memeber_coor = crop_name_to_coor(member_name)
+                crop_coor = crop_name_to_coor(crop_name)
+                overlap, _ = check_overlapping(memeber_coor, crop_coor)
+                if overlap:
+                    groups[group_id].append(crop_name)
+                    sum_row = groups_score[group_id] + score
+                    groups_score[group_id] = sum_row.unsqueeze(0)
+                    return groups, groups_score
+        groups[group_id+1] = [crop_name]
+        groups_score[group_id+1] = score.unsqueeze(0)
+        return groups, groups_score
+
+    def pick_largest_group(self, groups, groups_score):
+        max_num = 0
+        max_group_id = 0
+        max_score = torch.zeros([1, 2])
+        for group_id in groups:
+            mems = groups[group_id]
+            score = groups_score[group_id]
+            #mem_nums = [len(mem) for mem in mems]
+            if len(mems) > max_num or len(mems) == max_num and score[0, 1]>max_score[0, 1]:
+                max_num = len(mems)
+                max_group_id = group_id
+                max_score = score
+
+        image_score = max_score/max_num #groups_score[max_group_id]/max_num
+        return image_score#.unsqueeze(0)
+
+
+
+
     def define_image_level_score(self, image_crop_score_bins, crop_file_names):
         image_level_score = None# torch.zeros(len(image_datasets['test'].imgs), 2).cuda()
         image_level_label = None #torch.LongTensor(len(image_datasets['test'].imgs)).cuda()
@@ -81,7 +125,7 @@ class SW_Classifier():
                self.datasplit.image_datasets[self.crop_split].dataset.imgs
         else:
             image_name_label_tups =\
-                self.crop_datasplit.image_datasets[self.crop_split].imgs
+                self.datasplit.image_datasets[self.crop_split].imgs
         for idx, file_name_tup in enumerate(image_name_label_tups):
             file_dir, file_name = os.path.split(file_name_tup[0])
             file_name, ext = os.path.splitext(file_name)
@@ -89,6 +133,14 @@ class SW_Classifier():
                 score = image_crop_score_bins[file_name]
                 val_s, idx_s = score[:,1].sort(descending=True)
                 score_com = score[idx_s[0:self.window_avg]].sum(0).unsqueeze(0)/self.window_avg
+                groups = {}
+                groups_score = {}
+                for i in idx_s[0:self.window_avg]:
+
+                    groups, groups_score =\
+                        self.add_to_spatial_connected_groupping(score[i], crop_file_names[file_name][i], groups, groups_score)
+                score_com = self.pick_largest_group(groups, groups_score)
+
                 if file_name_tup[1] == 0 and self.crop_split == 'train':
                     for i in idx_s[0:10]:
                         self.write_hard_negitives(crop_file_names[file_name][i],
@@ -102,7 +154,7 @@ class SW_Classifier():
                     image_level_score = torch.cat((image_level_score, score_com))
                     image_level_label = torch.cat((image_level_label, torch.LongTensor([file_name_tup[1]])))
             else:
-                print("file name missing")
+                print("File name missing from bins")
         return image_level_score, image_level_label
 
     def plot_results(self, crop_labels, crop_scores, crop_cm,
@@ -121,7 +173,6 @@ class SW_Classifier():
         evaluation.plot_results()
 
     def one_vs_all_sw(self, best_model_path, colors):
-
         crop_labels, crop_scores, crop_cm =\
             self.train_resnet.test_model(best_model_path, self.crop_datasplit)
 
@@ -135,7 +186,6 @@ class SW_Classifier():
                           image_labels,  image_scores, colors)
 
     def one_vs_all_train(self, colors):
-
         #datasplit = DataSplit(cfg, data_dir=data_dir)
         #train_resnet = TrainResent(cfg, datasplit, data_dir=data_dir)
         best_model_path = self.train_resnet.finetune_model_fun()
@@ -166,15 +216,19 @@ def main():
     sw_pr_curve_plot = curve.add_subplot(326)
     '''
 
-    jap_train_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/jap_vs_all_hn'
+    #jap_train_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/jap_vs_all_hn'
+    jap_train_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/jap_vs_all'
     jap_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/jap_vs_all_complete'
     jap_data_dir_undivided = './dataset/data_train_test_splited/one_vs_all/jap_vs_all'
+
+    #jap_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/jap_vs_all_hn'
 
     phrag_train_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/phrag_vs_all_hn'
     phrag_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/phrag_vs_all_complete'
     phrag_data_dir_undivided = './dataset/data_train_test_splited/one_vs_all/phrag_vs_all'
 
 
+    '''
     data_dir = './hymenoptera_data'
     jap_train_data_dir = data_dir
     phrag_train_data_dir = data_dir
@@ -183,11 +237,20 @@ def main():
     jap_data_dir_undivided = data_dir
     phrag_data_dir_undivided= data_dir
     #data_dir_undivided = './hymenoptera_data'''
-    jap_best_model_path = './hymenoptera_datamodel_best.pth.tar'
-    sw_classifier = SW_Classifier(cfg, data_dir, data_dir, data_dir)
+
+
+    #jap_best_model_path = './hymenoptera_datamodel_best.pth.tar'
+    #def __init__(self, cfg, cropsubset_data_dir,
+    #                crop_data_dir, data_dir):
+    #def __init__(self, cfg, cropsubset_data_dir,
+    #                crop_data_dir, data_dir):
+    sw_classifier = SW_Classifier(cfg, jap_train_data_dir,
+                                  jap_data_dir, jap_data_dir_undivided)
 
     colors = ['aqua', 'darkorange', 'cornflowerblue']
     #jap_best_model_path = sw_classifier.one_vs_all_train(colors)
+    jap_best_model_path = '/home/deepak/invasive_detector/'+jap_train_data_dir+'model_best.pth.tar'
+    sw_classifier.one_vs_all_sw(jap_best_model_path, colors)
     '''
     colors = ['red', 'green', 'cornflowerblue']
     #data_dir = './dataset/data_train_test_splited/one_vs_all/jap_vs_all'
@@ -195,10 +258,8 @@ def main():
     '''
 
 
-    #jap_best_model_path = '/home/deepak/thesis/'+jap_train_data_dir+'model_best.pth.tar'
     #phrag_best_model_path = '/home/deepak/thesis/'+phrag_train_data_dir+'model_best.pth.tar'
-    colors = ['aqua', 'darkorange', 'cornflowerblue']
-    sw_classifier.one_vs_all_sw(jap_best_model_path, colors)
+    #colors = ['aqua', 'darkorange', 'cornflowerblue']
     plt.show()
     input()
     return

@@ -182,9 +182,9 @@ class TrainResent():
                 consolidated_label = copy.deepcopy(labels.data)
             else:
                 consolidated_score =\
-                    torch.cat((outputs.data, consolidated_score), 0)
+                    torch.cat((consolidated_score, outputs.data), 0)
                 consolidated_label =\
-                    torch.cat((labels.data, consolidated_label), 0)
+                    torch.cat((consolidated_label, labels.data), 0)
 
             confusion_matrix.add(outputs.data, labels.data)
 

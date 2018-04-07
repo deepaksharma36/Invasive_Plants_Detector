@@ -1,5 +1,5 @@
 RESNET:
-    NUM_EPOCHS : 10
+    NUM_EPOCHS : 100
     LEARNING_RATE : 0.0008
     PORT : 8097
     MOMENTUM : 0.9
@@ -15,7 +15,7 @@ DATASET:
     DATA_DIR : './hymenoptera_data'
     IMG_SIZE : [224, 224]
 SW:
-    SWF : False
+    SWF : True
     CROP_SPLIT : "test"
     WINDOW_AVG : 25
     WRITE_HARD_NEG : False
