@@ -52,10 +52,12 @@ class DataSplit():
         }
 
     def __load_image_dataset__(self):
+        self.image_datasets = {}
+        self.image_datasets['train_val'] =\
+            datasets.ImageFolder(os.path.join(self.data_dir, 'train'), self.data_transforms['train'])
+        self.image_datasets['test'] =\
+            datasets.ImageFolder(os.path.join(self.data_dir, 'test'), self.data_transforms['test'])
 
-        self.image_datasets =\
-            {x: datasets.ImageFolder(os.path.join(self.data_dir, x),
-                                     self.data_transforms[x]) for x in ['train', 'test']}
 
         self.classes_name = self.image_datasets['test'].classes
 
@@ -63,21 +65,20 @@ class DataSplit():
             {split: dict(Counter(sample_tup[1]\
                                  for sample_tup in\
                                  self.image_datasets[split].imgs)) for \
-             split in ['train', 'test']}
+             split in ['train_val', 'test']}
 
     def __devide_train_data__(self):
-        dataset_size = self.image_datasets['train'].__len__()
+        dataset_size = self.image_datasets['train_val'].__len__()
         train_split_size = int(dataset_size*self.train_val_ratio)
         val_split_size = dataset_size-int(dataset_size*self.train_val_ratio)
         self.image_datasets['train'], self.image_datasets['val'] =\
-            random_split(self.image_datasets['train'],[train_split_size,
+            random_split(self.image_datasets['train_val'],[train_split_size,
                                                        val_split_size])
 
     def __set_data_loader__(self):
-
         self.dataloaders = {}
         self.dataloaders['train_val'] =\
-            torch.utils.data.DataLoader(self.image_datasets['train'],
+            torch.utils.data.DataLoader(self.image_datasets['train_val'],
                                         batch_size=self.batch_size,
                                         shuffle=False,
                                         num_workers=self.num_worker)
@@ -100,5 +101,5 @@ class DataSplit():
         self.dataset_sizes =\
             {x: len(self.image_datasets[x]) for x in ['train', 'val', 'test']}
         self.class_weights =\
-            [1-(float(self.class_counts['train'][class_id])/(self.dataset_sizes['train']+self.dataset_sizes['val']))
+            [1-(float(self.class_counts['train_val'][class_id])/(self.dataset_sizes['train']+self.dataset_sizes['val']))
              for class_id in range(self.num_classes)]

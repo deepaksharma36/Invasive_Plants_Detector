@@ -1,3 +1,12 @@
+DENSNET:
+    NUM_EPOCHS : 100
+    #NUM_EPOCHS : 5
+    LEARNING_RATE : 0.0008
+    PORT : 8097
+    MOMENTUM : 0.9
+    STEP_SIZE : 7
+    GAMMA : 0.1
+    ARCH : 'densenet121'
 RESNET:
     NUM_EPOCHS : 100
     LEARNING_RATE : 0.0008
@@ -5,9 +14,10 @@ RESNET:
     MOMENTUM : 0.9
     STEP_SIZE : 7
     GAMMA : 0.1
+    ARCH : 'resnet18'
 DATASET:
     NAME: Invasive
-    BATCH_SIZE : 160
+    BATCH_SIZE : 32
     NUM_CLASSES : 2
     NUM_WORKER : 3
     TRAIN_SHUFFLE : True
@@ -15,7 +25,38 @@ DATASET:
     DATA_DIR : './hymenoptera_data'
     IMG_SIZE : [224, 224]
 SW:
+    #SWF : False
     SWF : True
     CROP_SPLIT : "test"
+    #CROP_SPLIT : "train_val"
     WINDOW_AVG : 25
-    WRITE_HARD_NEG : False
+    WRITE_HARD_NEG : True
+    SPATIAL_CC : False
+    PICK_SCORES : True
+    #PICK_SCORES : False
+
+Checklist:
+
+    debugging:
+        set_SWF: False
+
+    Training_testing:
+        checklearning_rate: True
+        checknum_epoches: True
+        checkarch: True
+        set_train_shuffle: True
+        set_crop_split: "test"
+        set_first_time_pick_scrores: False
+        set_train_shuffle: True
+        check_spatial_cc: False
+        set_SWF: True
+
+    hard_neg_mining:
+        set_train_shuffle: False
+        set_crop_split: "train_val"
+        set_first_time_pick_scrores: False
+        set_train_shuffle: False
+        check_spatial_cc: False
+        set_SWF: True
+
+
