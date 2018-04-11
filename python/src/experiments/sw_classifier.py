@@ -115,8 +115,6 @@ class SW_Classifier():
         return image_score#.unsqueeze(0)
 
 
-
-
     def define_image_level_score(self, image_crop_score_bins, crop_file_names):
         image_level_score = None# torch.zeros(len(image_datasets['test'].imgs), 2).cuda()
         image_level_label = None #torch.LongTensor(len(image_datasets['test'].imgs)).cuda()
