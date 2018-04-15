@@ -30,9 +30,9 @@ class SW_Classifier():
             self.crop_datasplit = DataSplit(cfg, data_dir=crop_data_dir)
         if data_dir:
             self.datasplit = DataSplit(cfg, data_dir=data_dir)
-        self.train_resnet = None
+        self.train_classifier = None
         if cropsubset_data_dir:
-            self.train_resnet = TrainDensnet(cfg, self.cropsubset_datasplit)
+            self.train_classifier = TrainDensnet(cfg, self.cropsubset_datasplit)
         self.datasets = None
         self.__init_plots__()
 
@@ -40,7 +40,7 @@ class SW_Classifier():
         self.cropsubset_datasplit = DataSplit(self.cfg, data_dir=cropsubset_data_dir)
         self.crop_datasplit = DataSplit(self.cfg, data_dir=crop_data_dir)
         self.datasplit = DataSplit(self.cfg, data_dir=data_dir)
-        self.train_resnet = TrainDensnet(self.cfg, self.cropsubset_datasplit)
+        self.train_classifier = TrainDensnet(self.cfg, self.cropsubset_datasplit)
 
     def __init_plots__(self):
         curve = plt.figure()
@@ -54,7 +54,7 @@ class SW_Classifier():
 
     def set_hard_neg_file(self):
         hard_neg_dir = os.path.join(*[self.crop_datasplit.data_dir,
-                              'hard_neg', self.train_resnet.arch])
+                              'hard_neg', self.train_classifier.arch])
         if not os.path.isdir(hard_neg_dir):
             os.makedirs(hard_neg_dir)
         hard_neg_file_path = os.path.join(*[hard_neg_dir,'hard_neg'])
@@ -246,7 +246,7 @@ class SW_Classifier():
 
     def get_pick_path(self):
         pick_dir = os.path.join(*[self.crop_datasplit.data_dir,
-                              'scores_labels', self.train_resnet.arch],
+                              'scores_labels', self.train_classifier.arch],
                                 self.crop_split)
         if not os.path.isdir(pick_dir):
             os.makedirs(pick_dir)
@@ -276,10 +276,10 @@ class SW_Classifier():
 
 
     def one_vs_all_sw(self, best_model_path, colors):
-        assert self.train_resnet, "Datasets are not assigned"
+        assert self.train_classifier, "Datasets are not assigned"
         if not self.pick_scores:
             crop_labels, crop_scores, crop_cm =\
-                self.train_resnet.test_model(best_model_path, self.crop_datasplit, self.crop_split)
+                self.train_classifier.test_model(best_model_path, self.crop_datasplit, self.crop_split)
             self.write_matrix(crop_scores, crop_labels)
         else:
             crop_scores, crop_labels = self.read_matrix()
@@ -295,10 +295,10 @@ class SW_Classifier():
                           image_labels,  image_scores, whole_img_cm, colors)
 
     def one_vs_all_train(self, colors, best_model_path=None):
-        assert self.train_resnet, "Datasets are not assigned"
+        assert self.train_classifier, "Datasets are not assigned"
         if not best_model_path:
-            best_model_path = self.train_resnet.finetune_model_fun()
-        labels, scores, cm = self.train_resnet.test_model(best_model_path)
+            best_model_path = self.train_classifier.finetune_model_fun()
+        labels, scores, cm = self.train_classifier.test_model(best_model_path)
         evaluation = Evaluation(self.cropsubset_datasplit.classes_name,
                                 labels, scores, cm,
                                 self.roc_curve_plot_subset,

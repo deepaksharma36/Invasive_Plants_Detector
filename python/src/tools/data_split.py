@@ -23,18 +23,18 @@ class DataSplit():
         self.__define_trasformations__(self.img_size)
         self.load_data()
 
-    def __define_trasformations__(self, size):
+    def __define_trasformations__(self, size=(224,224)):
         self.data_transforms = {
             'train': transforms.Compose([
                 #transforms.Resize((13311//4, 2800//4)),
-                transforms.Resize((224,224)),
+                transforms.Resize(size),
                 #13311 x2800
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
             ]),
             'val': transforms.Compose([
-                transforms.Resize((224,224)),
+                transforms.Resize(size),
                 #transforms.Resize((13311//4, 2800//4)),
                 #transforms.Resize((13312//4, 6656//4)),
                 #transforms.CenterCrop(224),
@@ -42,7 +42,7 @@ class DataSplit():
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
             ]),
             'test': transforms.Compose([
-                transforms.Resize((224,224)),
+                transforms.Resize(size),
                 #transforms.Resize((13311//4, 2800//4)),
                 #transforms.Resize((13312//4, 6656//4)),
                 #transforms.CenterCrop(224),

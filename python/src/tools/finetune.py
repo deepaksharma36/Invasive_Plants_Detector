@@ -23,10 +23,10 @@ from src.models.resnet import resnet18
 
 
 class Train():
-    def __init__(self, datasplit, **kwargs):
+    def __init__(self, datasplit=None, **kwargs):
         self.start_epoch = 0
         self.datasplit = datasplit
-        self.data_dir = datasplit.data_dir
+        #self.data_dir = datasplit.data_dir
         self.optimizer = None
         self.use_gpu = torch.cuda.is_available()
         self.best_model_path = None
@@ -69,7 +69,7 @@ class Train():
                                  'best_prec1': self.best_val_acc,
                                  'optimizer': self.optimizer.state_dict()}
 
-        checkpoint_dir = os.path.join(*[self.data_dir, 'trained_models'])
+        checkpoint_dir = os.path.join(*[self.datasplit.data_dir, 'trained_models'])
         if not  os.path.isdir(checkpoint_dir):
             os.makedirs(checkpoint_dir)
         checkpoint_path = os.path.join(*[checkpoint_dir,
@@ -82,8 +82,7 @@ class Train():
                 os.path.join(*[checkpoint_dir, self.arch+'_model_best.pth.tar'])
             shutil.copyfile(checkpoint_path, self.best_model_path )
 
-    def train_model(self):
-        assert self.optimizer, "No optimizer defined"
+    def __train_model__(self):
         self.__init_meters__()
         since = time.time()
         for epoch in range(self.start_epoch+1, self.num_epochs):
@@ -144,6 +143,7 @@ class Train():
         if not best_model_path and self.best_model_path:
             best_model_path = self.best_model_path
         if not datasplit:
+            assert self.datasplit, "No datasplit provided"
             datasplit = self.datasplit
 
         self.load_or_set_model(checkpoint_path=best_model_path)
@@ -175,8 +175,10 @@ class Train():
         return consolidated_label, consolidated_score, confusion_matrix
 
     def finetune_model_fun(self, checkpoint_path=None):
+        #assert self.optimizer, "No optimizer defined"
+        assert self.datasplit, "No datasplit assigned"
         print(self.datasplit.class_counts)
         print(self.datasplit.class_weights)
         self.load_or_set_model(checkpoint_path)
         self.set_loss_fun_optimizer_and_scheduler()
-        return self.train_model()
+        return self.__train_model__()

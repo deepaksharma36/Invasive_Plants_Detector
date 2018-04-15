@@ -24,7 +24,7 @@ from src.tools.finetune import Train
 
 
 class TrainDensnet(Train):
-    def __init__(self, cfg, datasplit, **kwargs):
+    def __init__(self, cfg, datasplit=None, **kwargs):
         self.momentum = cfg.DENSNET.MOMENTUM
         self.learning_rate = cfg.DENSNET.LEARNING_RATE
         self.gamma = cfg.DENSNET.GAMMA

@@ -15,7 +15,7 @@ from src.tools.finetune import Train
 
 
 class TrainResent(Train):
-    def __init__(self, cfg, datasplit, **kwargs):
+    def __init__(self, cfg, datasplit=None, **kwargs):
         self.data_dir = cfg.DATASET.DATA_DIR
         self.momentum = cfg.RESNET.MOMENTUM
         self.learning_rate = cfg.RESNET.LEARNING_RATE
