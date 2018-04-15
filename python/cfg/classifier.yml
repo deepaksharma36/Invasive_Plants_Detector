@@ -15,6 +15,14 @@ RESNET:
     STEP_SIZE : 7
     GAMMA : 0.1
     ARCH : 'resnet18'
+RESNET_MAX:
+    NUM_EPOCHS : 6
+    LEARNING_RATE : 0.00001
+    PORT : 8097
+    MOMENTUM : 0.9
+    STEP_SIZE : 7
+    GAMMA : 0.1
+    ARCH : 'resnet18'
 DATASET:
     NAME: Invasive
     BATCH_SIZE : 32
@@ -23,6 +31,8 @@ DATASET:
     TRAIN_SHUFFLE : True
     TRAIN_VAL_RATIO : .8
     DATA_DIR : './hymenoptera_data'
+    #IMG_SIZE : [224, 224]
+    #IMG_SIZE : [224, 224]
     IMG_SIZE : [224, 224]
 SW:
     #SWF : False

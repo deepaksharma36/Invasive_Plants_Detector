@@ -1,0 +1,25 @@
+TASKS:
+    SPLIT_FILE_OUT: False
+    DATA_OUT: True
+    DATA_CROPPING : False
+
+DATA_IN:
+    DATA_IN_DIR : $INVASIVE_DETECTOR/dataset/downloaded
+    INVASIVE_DIR : $INVASIVE_DETECTOR/dataset/downloaded/noinvasives/
+    NON_INVASIVE_DIR : $INVASIVE_DETECTOR/dataset/downloaded/z5/
+    BB_FILE : $INVASIVE_DETECTOR/dataset/downloaded/bb.txt
+    TRAIN_SPLIT_FILE_INV_NON_INV : $INVASIVE_DETECTOR/dataset/split_files/invasive-non_invasive_split/train.lst
+    TEST_SPLIT_FILE_INV_NON_INV : $INVASIVE_DETECTOR/dataset/split_files/invasive-non_invasive_split/test.lst
+
+SPLIT_FILE_IN_OUT:
+    TRAIN_SPLIT_FILE_PHRAG_JAP_NON_INV : $INVASIVE_DETECTOR/dataset/split_files/jap_phrag-non_invasive_split/train.lst
+    TEST_SPLIT_FILE_PHRAG_JAP_NON_INV : $INVASIVE_DETECTOR/dataset/split_files/jap_phrag-non_invasive_split/train.lst
+    WRITE: False
+
+PREPED_DATA_IN_OUT:
+    DATA_OUT_DIR : $INVASIVE_DETECTOR/dataset/data_train_test_splited/one_vs_all_cropped
+    CROPPING : True
+    CROPPING : ()
+
+SW_DATA_IN_OUT:
+    SW_DATA_OUT_DIR : $INVASIVE_DETECTOR/dataset/data_train_test_splited/one_vs_all_sub_images
