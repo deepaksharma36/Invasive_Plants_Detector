@@ -1,3 +1,7 @@
+NETWORK:
+    #TYPE: resnetMax
+    TYPE: resnet4BlockMax
+
 DENSNET:
     NUM_EPOCHS : 100
     #NUM_EPOCHS : 5
@@ -7,6 +11,7 @@ DENSNET:
     STEP_SIZE : 7
     GAMMA : 0.1
     ARCH : 'densenet121'
+
 RESNET:
     NUM_EPOCHS : 100
     LEARNING_RATE : 0.0008
@@ -15,25 +20,38 @@ RESNET:
     STEP_SIZE : 7
     GAMMA : 0.1
     ARCH : 'resnet18'
+
 RESNET_MAX:
-    NUM_EPOCHS : 6
-    LEARNING_RATE : 0.00001
+    NUM_EPOCHS : 100
+    LEARNING_RATE : 0.0001
     PORT : 8097
     MOMENTUM : 0.9
     STEP_SIZE : 7
     GAMMA : 0.1
     ARCH : 'resnet18'
+
+RESNET_4BLOCK_MAX:
+    NUM_EPOCHS : 100
+    LEARNING_RATE : 0.0001
+    PORT : 8097
+    MOMENTUM : 0.9
+    STEP_SIZE : 7
+    GAMMA : 0.1
+    ARCH : 'resnet18'
+
 DATASET:
     NAME: Invasive
-    BATCH_SIZE : 32
+    BATCH_SIZE : 3
     NUM_CLASSES : 2
-    NUM_WORKER : 3
+    NUM_WORKER : 4
     TRAIN_SHUFFLE : True
     TRAIN_VAL_RATIO : .8
     DATA_DIR : './hymenoptera_data'
     #IMG_SIZE : [224, 224]
     #IMG_SIZE : [224, 224]
-    IMG_SIZE : [224, 224]
+    #IMG_SIZE : [224, 224]
+    IMG_SIZE : [3328, 700]
+    #IMG_SIZE : [6650, 1400]
 SW:
     #SWF : False
     SWF : True
