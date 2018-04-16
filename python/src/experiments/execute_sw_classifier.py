@@ -16,9 +16,9 @@ def jap_vs_all(cfg, sw_classifier):
             '/home/deepak/invasive_detector/dataset/data_train_test_splited/one_vs_all_sub_images_take2//jap_vs_all_hn/trained_models/densenet121_model_best.pth.tar'
     #        '/home/deepak/invasive_detector/dataset/data_train_test_splited/one_vs_all_sub_images_take2/jap_vs_all/trained_models/dense_model_best.pth.tar'
     sw_classifier.window_avg = 6
-    #jap_best_model_path = sw_classifier.one_vs_all_train(colors, jap_best_model_path)
-    #jap_best_model_path = sw_classifier.one_vs_all_train(colors)
-    sw_classifier.one_vs_all_sw(jap_best_model_path, colors)
+    #jap_best_model_path = sw_classifier.train_classifier(colors, jap_best_model_path)
+    #jap_best_model_path = sw_classifier.train_classifier(colors)
+    sw_classifier.test_classifier(jap_best_model_path, colors)
 
 def phrag_vs_all(cfg, sw_classifier):
     phrag_train_data_dir = './dataset/data_train_test_splited/one_vs_all_sub_images_take2/phrag_vs_all_hn'
@@ -31,16 +31,16 @@ def phrag_vs_all(cfg, sw_classifier):
             '/home/deepak/invasive_detector/dataset/data_train_test_splited/one_vs_all_sub_images_take2//phrag_vs_all_hn/trained_models/densenet121_model_best.pth.tar'
     colors = ['red', 'green', 'cornflowerblue']
     sw_classifier.window_avg = 8
-    #pharg_best_model_path = sw_classifier.one_vs_all_train(colors, phrag_best_model_path)
-    #phrag_best_model_path = sw_classifier.one_vs_all_train(colors)
-    sw_classifier.one_vs_all_sw(phrag_best_model_path, colors)
+    #pharg_best_model_path = sw_classifier.train_classifier(colors, phrag_best_model_path)
+    #phrag_best_model_path = sw_classifier.train_classifier(colors)
+    sw_classifier.test_classifier(phrag_best_model_path, colors)
 
 def implementation_test(cfg, sw_classifier):
     data_dir = './hymenoptera_data'
     colors = ['red', 'green', 'cornflowerblue']
     sw_classifier.assign_datasets(data_dir, data_dir, data_dir)
-    test_best_model_path = sw_classifier.one_vs_all_train(colors)
-    sw_classifier.one_vs_all_sw(test_best_model_path, colors)
+    test_best_model_path = sw_classifier.train_classifier(colors)
+    sw_classifier.test_classifier(test_best_model_path, colors)
 
 
 
