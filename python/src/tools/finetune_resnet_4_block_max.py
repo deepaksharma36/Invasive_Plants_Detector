@@ -11,23 +11,23 @@ from __future__ import print_function, division
 import torch
 import torch.nn as nn
 import os
-from src.models.resnet import resnet18
+from src.models.resnet_surgery import resnet18
 from src.tools.finetune import Train
 
 
-class TrainResnetMax(Train):
+class TrainResnet4BlockMax(Train):
     def __init__(self, cfg, datasplit=None, **kwargs):
         self.network_type = cfg.NETWORK.TYPE
         self.data_dir = cfg.DATASET.DATA_DIR
-        self.momentum = cfg.RESNET_MAX.MOMENTUM
-        self.learning_rate = cfg.RESNET_MAX.LEARNING_RATE
-        self.gamma = cfg.RESNET_MAX.GAMMA
-        self.step_size = cfg.RESNET_MAX.STEP_SIZE
+        self.momentum = cfg.RESNET_4BLOCK_MAX.MOMENTUM
+        self.learning_rate = cfg.RESNET_4BLOCK_MAX.LEARNING_RATE
+        self.gamma = cfg.RESNET_4BLOCK_MAX.GAMMA
+        self.step_size = cfg.RESNET_4BLOCK_MAX.STEP_SIZE
         self.batch_size = cfg.DATASET.BATCH_SIZE
-        self.num_epochs = cfg.RESNET_MAX.NUM_EPOCHS
-        self.arch  = cfg.RESNET_MAX.ARCH
+        self.num_epochs = cfg.RESNET_4BLOCK_MAX.NUM_EPOCHS
+        self.arch  = cfg.RESNET_4BLOCK_MAX.ARCH
         self.num_classes = cfg.DATASET.NUM_CLASSES
-        self.port = cfg.RESNET_MAX.PORT
+        self.port = cfg.RESNET_4BLOCK_MAX.PORT
         super().__init__(datasplit, **kwargs)
         '''
         self.start_epoch = 0
@@ -44,6 +44,7 @@ class TrainResnetMax(Train):
         num_ftrs = self.model.fc.in_features
         self.model.fc = nn.Linear(num_ftrs, self.datasplit.num_classes)
         self.model.avgpool = nn.AdaptiveMaxPool2d((1,1))
+        self.model.layer4 = None
         if self.use_gpu:
             self.model = self.model.cuda()
         if checkpoint_path and os.path.isfile(checkpoint_path):

@@ -5,6 +5,7 @@ Deepak Sharma
 """
 # License: BSD
 # Author: Sasank Chilamkurthy
+# Author: Deepak Sharma
 
 from __future__ import print_function, division
 import torch
@@ -25,6 +26,7 @@ from src.tools.finetune import Train
 
 class TrainDensnet(Train):
     def __init__(self, cfg, datasplit=None, **kwargs):
+        self.network_type = cfg.NETWORK.TYPE
         self.momentum = cfg.DENSNET.MOMENTUM
         self.learning_rate = cfg.DENSNET.LEARNING_RATE
         self.gamma = cfg.DENSNET.GAMMA

@@ -5,6 +5,7 @@ Deepak Sharma
 """
 # License: BSD
 # Author: Sasank Chilamkurthy
+# Author: Deepak Sharma
 
 from __future__ import print_function, division
 import torch
@@ -14,8 +15,9 @@ from src.models.resnet import resnet18
 from src.tools.finetune import Train
 
 
-class TrainResent(Train):
+class TrainResnet(Train):
     def __init__(self, cfg, datasplit=None, **kwargs):
+        self.network_type = cfg.NETWORK.TYPE
         self.data_dir = cfg.DATASET.DATA_DIR
         self.momentum = cfg.RESNET.MOMENTUM
         self.learning_rate = cfg.RESNET.LEARNING_RATE

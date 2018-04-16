@@ -19,7 +19,6 @@ import os
 import copy
 from torchnet.meter import ConfusionMeter
 import torchnet as tnt
-from src.models.resnet import resnet18
 
 
 class Train():
@@ -69,7 +68,7 @@ class Train():
                                  'best_prec1': self.best_val_acc,
                                  'optimizer': self.optimizer.state_dict()}
 
-        checkpoint_dir = os.path.join(*[self.datasplit.data_dir, 'trained_models'])
+        checkpoint_dir = os.path.join(*[self.datasplit.data_dir, 'trained_models', self.network_type])
         if not  os.path.isdir(checkpoint_dir):
             os.makedirs(checkpoint_dir)
         checkpoint_path = os.path.join(*[checkpoint_dir,
@@ -175,7 +174,6 @@ class Train():
         return consolidated_label, consolidated_score, confusion_matrix
 
     def finetune_model_fun(self, checkpoint_path=None):
-        #assert self.optimizer, "No optimizer defined"
         assert self.datasplit, "No datasplit assigned"
         print(self.datasplit.class_counts)
         print(self.datasplit.class_weights)
