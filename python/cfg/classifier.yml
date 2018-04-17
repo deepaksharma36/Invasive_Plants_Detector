@@ -1,6 +1,7 @@
 NETWORK:
     #TYPE: resnetMax
-    TYPE: resnet4BlockMax
+    #TYPE: resnet4BlockMax
+    TYPE: resnet3BlockMax
 
 DENSNET:
     NUM_EPOCHS : 100
@@ -31,6 +32,15 @@ RESNET_MAX:
     ARCH : 'resnet18'
 
 RESNET_4BLOCK_MAX:
+    NUM_EPOCHS : 100
+    LEARNING_RATE : 0.0001
+    PORT : 8097
+    MOMENTUM : 0.9
+    STEP_SIZE : 7
+    GAMMA : 0.1
+    ARCH : 'resnet18'
+
+RESNET_3BLOCK_MAX:
     NUM_EPOCHS : 100
     LEARNING_RATE : 0.0001
     PORT : 8097
